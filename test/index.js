@@ -267,6 +267,16 @@ describe('CreditCard', function() {
       done();
     });
 
+    it('returns true for valid test cards', function(done) {
+      var defaults = CreditCard.defaults();
+
+      defaults.testCards.forEach(function(number) {
+          expect(CreditCard.isValidCardNumber(number, '')).to.equal(true);
+      });
+
+      done();
+    });
+
     it('returns false for numbers that pass luhn but fail are invalid', function(done) {
       expect(CreditCard.isValidCardNumber('123', 'AMERICANEXPRESS')).to.equal(false);
       done();
