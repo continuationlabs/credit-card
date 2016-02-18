@@ -20,6 +20,7 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
+    "object-assign": "^4.0.1",
     "reach": "1.x.x"
   },
   "devDependencies": {
