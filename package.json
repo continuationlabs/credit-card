@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "description": "credit card validation",
   "author": "Continuation Labs <contact@continuation.io> (http://continuation.io/)",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "homepage": "https://github.com/continuationlabs/credit-card",
   "repository": {
     "type": "git",
@@ -14,7 +14,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "test": "belly-button && lab -v -t 100 -a code"
+    "prepublish": "babel lib -d dist",
+    "test": "belly-button -i lib/** && lab -v -t 100 -a code"
   },
   "engines": {
     "node": ">=4.0.0"
@@ -24,6 +25,8 @@
     "reach": "1.x.x"
   },
   "devDependencies": {
+    "babel-cli": "^6.5.1",
+    "babel-preset-es2015": "^6.5.0",
     "belly-button": "1.x.x",
     "code": "2.x.x",
     "lab": "8.x.x"
