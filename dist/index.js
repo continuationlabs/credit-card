@@ -1,8 +1,9 @@
 'use strict';
-const Reach = require('reach');
-const assign = require('object-assign');
 
-let _defaults = {
+var Reach = require('reach');
+var assign = require('object-assign');
+
+var _defaults = {
   cardTypes: {
     VISA: {
       cardType: 'VISA',
@@ -67,20 +68,20 @@ _setupCardTypeAliases('DISCOVER', ['dc', 'DC', 'discover']);
 _setupCardTypeAliases('JCB', ['jcb']);
 
 // Store original defaults. This must happen after aliases are setup
-const _originalDefaults = assign({}, _defaults);
+var _originalDefaults = assign({}, _defaults);
 
-function validate (card, options) {
+function validate(card, options) {
   card = card || {};
 
-  const settings = assign({}, _defaults, options);
-  const schema = settings.schema;
-  const cardType = Reach(card, schema.cardType);
-  const number = sanitizeNumberString(Reach(card, schema.number));
-  const expiryMonth = Reach(card, schema.expiryMonth);
-  const expiryYear = Reach(card, schema.expiryYear);
-  const cvv = sanitizeNumberString(Reach(card, schema.cvv));
-  const customValidationFn = settings.customValidation;
-  let customValidation;
+  var settings = assign({}, _defaults, options);
+  var schema = settings.schema;
+  var cardType = Reach(card, schema.cardType);
+  var number = sanitizeNumberString(Reach(card, schema.number));
+  var expiryMonth = Reach(card, schema.expiryMonth);
+  var expiryYear = Reach(card, schema.expiryYear);
+  var cvv = sanitizeNumberString(Reach(card, schema.cvv));
+  var customValidationFn = settings.customValidation;
+  var customValidation = undefined;
 
   // Optional custom validation
   if (typeof customValidationFn === 'function') {
@@ -98,19 +99,18 @@ function validate (card, options) {
   };
 }
 
-function determineCardType (number, options) {
-  const settings = assign({}, _defaults, options);
-  const cardTypes = settings.cardTypes;
-  const keys = Object.keys(cardTypes);
+function determineCardType(number, options) {
+  var settings = assign({}, _defaults, options);
+  var cardTypes = settings.cardTypes;
+  var keys = Object.keys(cardTypes);
 
   number = sanitizeNumberString(number);
 
-  for (let i = 0; i < keys.length; ++i) {
-    const key = keys[i];
-    const type = cardTypes[key];
+  for (var i = 0; i < keys.length; ++i) {
+    var key = keys[i];
+    var type = cardTypes[key];
 
-    if (type.cardPattern.test(number) ||
-        (settings.allowPartial === true && type.partialPattern.test(number))) {
+    if (type.cardPattern.test(number) || settings.allowPartial === true && type.partialPattern.test(number)) {
       return type.cardType;
     }
   }
@@ -118,35 +118,35 @@ function determineCardType (number, options) {
   return null;
 }
 
-function isValidCardNumber (number, type, options) {
+function isValidCardNumber(number, type, options) {
   return doesNumberMatchType(number, type, options) && luhn(number);
 }
 
-function isValidExpiryMonth (month, options) {
-  const settings = assign({}, _defaults.expiryMonths, options);
+function isValidExpiryMonth(month, options) {
+  var settings = assign({}, _defaults.expiryMonths, options);
 
   if (typeof month === 'string' && month.length > 2) {
     return false;
   }
 
-  month = ~~month;
+  month = ~ ~month;
   return month >= settings.min && month <= settings.max;
 }
 
-function isValidExpiryYear (year, options) {
-  const settings = assign({}, _defaults.expiryYears, options);
+function isValidExpiryYear(year, options) {
+  var settings = assign({}, _defaults.expiryYears, options);
 
   if (typeof year === 'string' && year.length !== 4) {
     return false;
   }
 
-  year = ~~year;
+  year = ~ ~year;
   return year >= settings.min && year <= settings.max;
 }
 
-function doesNumberMatchType (number, type, options) {
-  const settings = assign({}, _defaults.cardTypes, options);
-  const patterns = settings[type];
+function doesNumberMatchType(number, type, options) {
+  var settings = assign({}, _defaults.cardTypes, options);
+  var patterns = settings[type];
 
   if (!patterns) {
     return false;
@@ -155,9 +155,9 @@ function doesNumberMatchType (number, type, options) {
   return patterns.cardPattern.test(number);
 }
 
-function doesCvvMatchType (number, type, options) {
-  const settings = assign({}, _defaults.cardTypes, options);
-  const patterns = settings[type];
+function doesCvvMatchType(number, type, options) {
+  var settings = assign({}, _defaults.cardTypes, options);
+  var patterns = settings[type];
 
   if (!patterns) {
     return false;
@@ -166,30 +166,30 @@ function doesCvvMatchType (number, type, options) {
   return patterns.cvvPattern.test(number);
 }
 
-function isExpired (month, year) {
-  month = ~~month;
-  year = ~~year;
+function isExpired(month, year) {
+  month = ~ ~month;
+  year = ~ ~year;
 
   // Cards are good until the end of the month
   // http://stackoverflow.com/questions/54037/credit-card-expiration-dates-inclusive-or-exclusive
-  const expiration = new Date(year, month);
+  var expiration = new Date(year, month);
 
   return Date.now() >= expiration;
 }
 
-function luhn (number) {
+function luhn(number) {
   // Source - https://gist.github.com/DiegoSalazar/4075533
 
   if (/[^\d]+/.test(number) || typeof number !== 'string' || !number) {
     return false;
   }
 
-  let nCheck = 0;
-  let bEven = false;
-  let nDigit;
+  var nCheck = 0;
+  var bEven = false;
+  var nDigit = undefined;
 
-  for (let i = number.length - 1; i >= 0; --i) {
-    nDigit = ~~number.charAt(i);
+  for (var i = number.length - 1; i >= 0; --i) {
+    nDigit = ~ ~number.charAt(i);
 
     if (bEven) {
       if ((nDigit *= 2) > 9) {
@@ -201,10 +201,10 @@ function luhn (number) {
     bEven = !bEven;
   }
 
-  return (nCheck % 10) === 0;
+  return nCheck % 10 === 0;
 }
 
-function sanitizeNumberString (number) {
+function sanitizeNumberString(number) {
   if (typeof number !== 'string') {
     return '';
   }
@@ -212,7 +212,7 @@ function sanitizeNumberString (number) {
   return number.replace(/[^\d]/g, '');
 }
 
-function defaults (options, overwrite) {
+function defaults(options, overwrite) {
   options = options || {};
 
   if (overwrite === true) {
@@ -224,13 +224,13 @@ function defaults (options, overwrite) {
   return _defaults;
 }
 
-function reset () {
+function reset() {
   _defaults = assign({}, _originalDefaults);
   return _defaults;
 }
 
-function _setupCardTypeAliases (type, aliases) {
-  for (let i = 0; i < aliases.length; ++i) {
+function _setupCardTypeAliases(type, aliases) {
+  for (var i = 0; i < aliases.length; ++i) {
     _defaults.cardTypes[aliases[i]] = _defaults.cardTypes[type];
   }
 }
